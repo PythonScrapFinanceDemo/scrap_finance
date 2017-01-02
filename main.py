@@ -31,8 +31,6 @@ columns = bsObj.findAll(style="padding-top: 1px;")
 columns_text = scrap.get_plain_text(columns)
 columns_text.insert(0,'排名')
 
-df = pd.DataFrame(columns=columns_text)
-
 
 def main():
     page = 1
@@ -41,6 +39,9 @@ def main():
     for i in range(page_length-1):   #收集剩余页信息
         page = scrap.next_page(page,driver)
         user_information = scrap.select_data(user_information,driver)
+
+    df = pd.DataFrame(user_information,columns = columns_text) #使用panndas储存数据
+
 
 if __name__ == "__main__":
     main()
