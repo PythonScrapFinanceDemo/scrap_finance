@@ -40,8 +40,15 @@ def main():
     page = 1
     user_information = []
     user_information = scrap.select_data(user_information,driver)  #收集第一页信息
+    logging.debug('Now group is:%s', group_name[scrap.get_group_now(group_name,driver) - 1])
+    '''
     for i in range(page_length-1):   #收集剩余页信息
         page = scrap.next_page(page,driver)
+        user_information = scrap.select_data(user_information,driver)
+    '''
+
+    for i in range(len(group_name) - 1):
+        scrap.next_group(group_name,driver) #收集剩余组信息
         user_information = scrap.select_data(user_information,driver)
 
     df = pd.DataFrame(user_information,columns = columns_text) #使用panndas储存数据

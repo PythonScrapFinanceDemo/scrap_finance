@@ -68,6 +68,7 @@ def get_next_page_button(driver):  #找到下一页的按钮并返回按钮
 
 def get_next_group_button(group_name,driver):
     group_now = get_group_now(group_name,driver)
+    # attention!这里的get_group_now返回的是下标加1的位置！即下标从1开始计数！
     group_next = group_now + 1
     try:
         assert(group_next<=len(group_name))
@@ -100,8 +101,8 @@ def next_group(group_name,driver):    #切换到下一个组
     except Exception as e:
         print("can't click the next group button! or other wrong!")
         raise e
-    logging.debug('Now group is:%s', group_name[get_group_now(group_name,driver)])
-    return group
+    logging.debug('Now group is:%s', group_name[get_group_now(group_name,driver) - 1])
+    #为什么要减一呢？因为get_group_now函数返回的是下标加一
 
 def day(day,driver):    #切换到下一天，或者下一个月等等
     return day
