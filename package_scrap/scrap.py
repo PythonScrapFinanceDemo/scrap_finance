@@ -104,5 +104,16 @@ def next_group(group_name,driver):    #切换到下一个组
     logging.debug('Now group is:%s', group_name[get_group_now(group_name,driver) - 1])
     #为什么要减一呢？因为get_group_now函数返回的是下标加一
 
-def day(day,driver):    #切换到下一天，或者下一个月等等
-    return day
+def go_to_day(day,driver):    #切换到指定某一天
+    search_button = driver.find_element_by_id("ibSearch")
+    day_input_text = driver.find_element_by_id("txtTradeDate")
+    day_input_text.clear()     #清空字符
+    day_input_text.send_keys(day)  #填充字符
+    try:
+        #assert()
+        search_button.click()  #点击搜索按钮
+        day_input_text = driver.find_element_by_id("txtTradeDate")
+        logging.debug('Now day is:%s', day_input_text.get_property("value"))
+    except Exception as e:
+        print("We can't go to the day! Or other wrong!")
+        raise e
