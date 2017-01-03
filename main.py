@@ -25,11 +25,15 @@ bsObj = BeautifulSoup(driver.page_source,'html.parser')
 page_option = bsObj.find('select',id="AspNetPager1_input").findAll('option')
 page_length = int(page_option[len(page_option)-1].get_text())    #获得所有页数
 
-
 columns = bsObj.findAll(style="padding-top: 1px;")
 #columns_text = get_plain_text(columns)
 columns_text = scrap.get_plain_text(columns)
 columns_text.insert(0,'排名')
+
+group_option = bsObj.find('div',{"class":"fl"}).find('dd').findAll('a')
+group_name = []   #采集所有group的名字
+for i in group_option:
+    group_name.append(i.get_text().split()[0])
 
 
 def main():

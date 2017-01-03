@@ -7,13 +7,15 @@ import pandas as pd
 import numpy as np
 
 
+#清洗掉数据中的垃圾，该函数只针对columns_text，看起来是个失败
 def get_plain_text(ResultSet):
     text = []
     for i in ResultSet:
         text.append(i.get_text().split()[0])    #因为split()返回的是字符串列表，所以要加[0]
     return text
 
-def select_data(user_information,driver):   #提取并清洗数据
+#读取数据，提取并清洗数据，最后装入user_information中
+def select_data(user_information,driver):
     bsObj = BeautifulSoup(driver.page_source,'html.parser')
     user_information_obj = bsObj.findAll('tr',style="background: #fff;")
     for i,user_i in enumerate(user_information_obj):
@@ -28,7 +30,7 @@ def select_data(user_information,driver):   #提取并清洗数据
     return user_information
 
 
-def get_page_now(driver):  #获取当前页数
+def get_page_now(driver):  #获取当前所在页数，并返回
     bsObj = BeautifulSoup(driver.page_source,'html.parser')
     #page_now = int(bsObj.find('select',id="AspNetPager1_input").find('option',selected="true").get_text())
     try:
@@ -38,8 +40,17 @@ def get_page_now(driver):  #获取当前页数
     else:
         return page_now
 
+def get_group_now(group_name,driver):  #获取当前所在group的id，并返回
+    bsObj = BeautifulSoup(driver.page_source,'html.parser')
+    try:
+        group_now = group_name.index(bsObj.find('div',{"class":"fl"}).find('dd').find('a',{"class":"select"}).get_text().split()[0]) + 1
+        #index()方法返回一个item在list中的位置，此处加1,是为了与dom中id从1开始相匹配，dom中链接的id为lbAccountType+i
+    except Exception as e:
+        print("We can't get the group_now!")
+    else:
+        return group_now
 
-def get_next_page_button(driver):  #返回按钮
+def get_next_page_button(driver):  #找到下一页的按钮并返回按钮
     page_now = get_page_now(driver)
     page_next = str(page_now + 1)
     try:
@@ -55,8 +66,18 @@ def get_next_page_button(driver):  #返回按钮
     else:
         return next_page_button
 
+def get_next_group_button(group_name,driver):
+    group_now = get_group_now(group_name,driver)
+    group_next = group_now + 1
+    try:
+        assert(group_next<=len(group_name))
+        next_group_button = driver.find_element_by_id("lbAccountType"+str(group_next))
+    except Exception as e:
+        print("We can't get the next group button!")
+    else:
+        return next_group_button
 
-def next_page(page,driver):
+def next_page(page,driver):    #翻页，并返回当前所在页数
     next_page_button = get_next_page_button(driver)
     try:
         next_page_button.click()   #模拟点击
@@ -71,3 +92,16 @@ def next_page(page,driver):
     logging.debug('The page we record is:%s', page)
     assert(page==page_now)
     return page
+
+def next_group(group_name,driver):    #切换到下一个组
+    next_group_button = get_next_group_button(group_name,driver)
+    try:
+        next_group_button.click()
+    except Exception as e:
+        print("can't click the next group button! or other wrong!")
+        raise e
+    logging.debug('Now group is:%s', group_name[get_group_now(group_name,driver)])
+    return group
+
+def day(day,driver):    #切换到下一天，或者下一个月等等
+    return day
