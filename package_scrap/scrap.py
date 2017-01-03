@@ -109,6 +109,7 @@ def go_to_day(day,driver):    #切换到指定某一天
     day_input_text = driver.find_element_by_id("txtTradeDate")
     day_input_text.clear()     #清空字符
     day_input_text.send_keys(day)  #填充字符
+    logging.debug('The day we want to go is:%s', day)
     try:
         #assert()
         search_button.click()  #点击搜索按钮

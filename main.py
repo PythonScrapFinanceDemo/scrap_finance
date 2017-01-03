@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 
 import package_scrap.scrap as scrap
+import package_scrap.date as dt
 
 logging.basicConfig(level=logging.DEBUG, format=' %(asctime)s - %(levelname)s - %(message)s')
 logging.debug('Start of program')
@@ -35,6 +36,8 @@ group_name = []   #采集所有group的名字
 for i in group_option:
     group_name.append(i.get_text().split()[0])
 
+date_list = []
+date_list = dt.get_date_list('2016-04-01','2016-9-30')  #获得所有日期
 
 def main():
     page = 1
@@ -52,10 +55,16 @@ def main():
         scrap.next_group(group_name,driver) #收集剩余组信息
         user_information = scrap.select_data(user_information,driver)
     '''
+    '''
     scrap.go_to_day('2016-08-17',driver)
     scrap.go_to_day('2016-07-15',driver)
-    df = pd.DataFrame(user_information,columns = columns_text) #使用panndas储存数据
+    '''
 
+    for date in date_list:
+        scrap.go_to_day(date,driver)
+        user_information = scrap.select_data(user_information,driver)
+
+    df = pd.DataFrame(user_information,columns = columns_text) #使用panndas储存数据
 
 if __name__ == "__main__":
     main()
