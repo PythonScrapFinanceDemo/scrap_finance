@@ -114,8 +114,9 @@ def next_group(group_name,driver):    #切换到下一个组
 
 def click_first_page(driver):
     try:
-        if get_page_now(driver) != 1:
-            first_page_button = driver.find_element_by_link_text('&lt;&lt;')
+        if get_page_now(driver) != 1:  #此处有bug
+            #first_page_button = driver.find_element_by_link_text('&lt;&lt;')
+            first_page_button = driver.find_element_by_xpath("//div[@class='Pager']/a[1]")
             first_page_button.click()
     except Exception as e:
         return 0

@@ -25,13 +25,13 @@ bsObj = BeautifulSoup(driver.page_source,'html.parser')
 '''
 page_option = bsObj.find('select',id="AspNetPager1_input").findAll('option')
 page_length = int(page_option[len(page_option)-1].get_text())    #获得所有页数
-'''
+
 
 columns = bsObj.findAll(style="padding-top: 1px;")
 #columns_text = get_plain_text(columns)
 columns_text = scrap.get_plain_text(columns)
 columns_text.insert(0,'排名')
-
+'''
 
 group_option = bsObj.find('div',{"class":"fl"}).find('dd').findAll('a')
 group_name = []   #采集所有group的名字
@@ -77,6 +77,8 @@ def main():
         #user_information = scrap.select_data(user_information,driver) #收集第一组信息
         for group_i in range(len(group_name)):
             if scrap.click_first_page(driver): #点击一下首页或者do nothing
+
+
                 user_information = []  #每采集某一组时，重新开始建立pandas文件
 
                 #因为page在不同组或者不同日下会有变化，每次获取某日某组所有日之前需要获取最新的页数
@@ -91,6 +93,10 @@ def main():
                     page = scrap.next_page(page,driver)
                 user_information = scrap.select_data(user_information,driver) #收集最后一页后，不再翻页
 
+                columns = bsObj.findAll(style="padding-top: 1px;")
+                #columns_text = get_plain_text(columns)
+                columns_text = scrap.get_plain_text(columns)
+                columns_text.insert(0,'排名')
                 df = pd.DataFrame(user_information,columns = columns_text) #使用pandas储存数据
                 df.to_csv(group_name[group_i]+'-'+date+'.csv',index=False) #每采集完一日的一组后，存储一次
 
