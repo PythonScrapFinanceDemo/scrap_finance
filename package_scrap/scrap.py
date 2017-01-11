@@ -6,6 +6,9 @@ import logging
 import pandas as pd
 import numpy as np
 
+'''
+这个垃圾网站每次翻到下一组的时候页码居然默认在最后，WTF？
+'''
 
 #清洗掉数据中的垃圾，该函数只针对columns_text，看起来是个失败
 def get_plain_text(ResultSet):
@@ -17,17 +20,21 @@ def get_plain_text(ResultSet):
 #读取数据，提取并清洗数据，最后装入user_information中
 def select_data(user_information,driver):
     bsObj = BeautifulSoup(driver.page_source,'html.parser')
-    user_information_obj = bsObj.findAll('tr',style="background: #fff;")
-    for i,user_i in enumerate(user_information_obj):
-        temp = []
-        for td_i in user_i.findAll("td"):
-            temp_data = td_i.get_text().split()
-            if not temp_data:     #无数据
-                temp.append("")
-            else:
-                temp.append(temp_data[0])
-        user_information.append(temp)
-    return user_information
+    try:
+        user_information_obj = bsObj.findAll('tr',style="background: #fff;")
+    except Exception as e:
+        print("No datas")
+    else:
+        for i,user_i in enumerate(user_information_obj):
+            temp = []
+            for td_i in user_i.findAll("td"):
+                temp_data = td_i.get_text().split()
+                if not temp_data:     #无数据
+                    temp.append("")
+                else:
+                    temp.append(temp_data[0])
+            user_information.append(temp)
+        return user_information
 
 
 def get_page_now(driver):  #获取当前所在页数，并返回
@@ -61,6 +68,7 @@ def get_next_page_button(driver):  #找到下一页的按钮并返回按钮
             next_page_button = driver.find_elements_by_link_text('...')[-1]
         #next_page_button = driver.find_element_by_link_text('&gt;')
     except Exception as e:
+        print("We at page: "+str(page_now))
         print("We can't get the next page button!")
         raise e
     else:
@@ -103,6 +111,16 @@ def next_group(group_name,driver):    #切换到下一个组
         raise e
     logging.debug('Now group is:%s', group_name[get_group_now(group_name,driver) - 1])
     #为什么要减一呢？因为get_group_now函数返回的是下标加一
+
+def click_first_page(driver):
+    try:
+        if get_page_now(driver) != 1:
+            first_page_button = driver.find_element_by_link_text('&lt;&lt;')
+            first_page_button.click()
+    except Exception as e:
+        return 0
+    else:
+        return 1
 
 def go_to_day(day,driver):    #切换到指定某一天
     search_button = driver.find_element_by_id("ibSearch")
