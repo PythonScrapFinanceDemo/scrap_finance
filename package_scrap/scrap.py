@@ -30,7 +30,7 @@ def select_data(user_information,driver):
             for td_i in user_i.findAll("td"):
                 temp_data = td_i.get_text().split()
                 if not temp_data:     #无数据
-                    temp.append("")
+                    temp.append("-")
                 else:
                     temp.append(temp_data[0])
             user_information.append(temp)
