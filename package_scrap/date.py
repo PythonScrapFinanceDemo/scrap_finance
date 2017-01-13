@@ -18,7 +18,7 @@ def get_date_list(begin_date,end_date):
     end_month = end_date[1]
     end_day = end_date[2]
     exclude_date = ['2016-04-02','2016-04-03','2016-04-04','2016-04-30','2016-05-01','2016-05-02','2016-06-09','2016-06-10','2016-06-11','2016-06-12','2016-09-15','2016-09-16','2016-09-17','2016-09-18']
-    if int(begin_year) == int(end_year) and int(begin_month) != int(end_month):
+    if int(begin_year) == int(end_year):
         total_month = int(end_month) - int(begin_month) + 1
         for month_id in range(total_month):
             month_end_day = calendar.monthrange(int(begin_year),month_id+int(begin_month))[1]
