@@ -118,7 +118,7 @@ def click_first_page(driver):
             #first_page_button = driver.find_element_by_link_text('&lt;&lt;')
             first_page_button = driver.find_element_by_xpath("//div[@class='Pager']/a[1]")
             first_page_button.click()
-    except Exception as e:
+    except Exception as e:    #点击第一页失败，出现这种情况可能是因为当天根本没有数据;或者本身就在第一页，此时也无法点击
         return 0
     else:
         return 1
