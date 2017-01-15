@@ -20,12 +20,16 @@ def rebuild_csv(folderName):  #适用于程序化组以及和其类似的组
         if file_i == 0:
             temp_df = pd.read_csv(os.path.join(folderName,filename))
             temp_df['时间'] = Series(get_date(filename),index=temp_df.index)
-            temp_df['组别'] = Series(folderName,index=temp_df.index)
+            temp_df['排行榜'] = Series(folderName,index=temp_df.index)
+            if '组别' not in temp_df.columns:
+                temp_df['组别'] = Series('-',index=temp_df.index)
             df = temp_df
         else:
             temp_df = pd.read_csv(os.path.join(folderName,filename))
             temp_df['时间'] = Series(get_date(filename),index=temp_df.index)
-            temp_df['组别'] = Series(folderName,index=temp_df.index)
+            temp_df['排行榜'] = Series(folderName,index=temp_df.index)
+            if '组别' not in temp_df.columns:
+                temp_df['组别'] = Series('-',index=temp_df.index)
             df = df.append(temp_df,ignore_index=True)
     df.to_csv(folderName+'.csv',index=False)
 
@@ -37,4 +41,5 @@ temp.sort('排名', ascending=False)
 
 
 if __name__ == '__main__':
-    rebuild_csv('轻量级组')
+    #rebuild_csv('轻量级组')
+    rebuild_csv(input("输入文件夹名：  "))
