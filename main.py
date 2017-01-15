@@ -27,7 +27,8 @@ for i in group_option:
 group_name.remove(group_name[-1])  #删除期权，比赛未做要求
 
 date_list = []
-date_list = dt.get_date_list('2016-04-01','2016-9-30')  #获得所有日期
+#date_list = dt.get_date_list('2016-04-01','2016-09-30')  #获得所有日期
+date_list = dt.get_date_list('2016-04-18','2016-09-30')  #获得所有日期
 
 def main():
     '''
@@ -37,7 +38,7 @@ def main():
         scrap.go_to_day(date,driver)   #到达指定的date
         scrap.click_first_page(driver) #点击一下首页或者do nothing
 
-        for group_i in range(len(group_name)):
+        for group_i in range(len(group_name) - 1):  #暂时放弃净利润，每次都卡死，WTF！
             if scrap.click_first_page(driver): #点击一下首页或者do nothing
                 user_information = []  #每采集某一组时，重新开始建立pandas文件
 

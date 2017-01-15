@@ -36,7 +36,7 @@ def tick_weekend(date_list):
     for date in date_list:
         date_temp = date.split("-")
         weekday = calendar.weekday(int(date_temp[0]),int(date_temp[1]),int(date_temp[2]))
-        if weekday != 0 and weekday != 6:
+        if weekday != 5 and weekday != 6:
             date_without_weekend.append(date)
     return date_without_weekend
 
