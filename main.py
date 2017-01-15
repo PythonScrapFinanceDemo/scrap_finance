@@ -38,7 +38,7 @@ def main():
         scrap.go_to_day(date,driver)   #到达指定的date
         scrap.click_first_page(driver) #点击一下首页或者do nothing
 
-        for group_i in range(len(group_name) - 1):  #暂时放弃净利润，每次都卡死，WTF！
+        for group_i in range(len(group_name)):
             if scrap.click_first_page(driver): #点击一下首页或者do nothing
                 user_information = []  #每采集某一组时，重新开始建立pandas文件
 
