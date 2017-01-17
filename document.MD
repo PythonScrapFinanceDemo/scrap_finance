@@ -158,10 +158,4 @@ def get_next_page_button(driver):  #找到下一页的按钮并返回按钮
 4. `deal_csv.py` 部分  
 `deal_csv(folderName,label=0)`方法用于处理抓取的数据，使用os模块获取所有已爬取的csv文件，一次运行针对一个特定组别，因为前四个参赛组和后六个参赛组columns信息数不同，所以通过传入的label来判断是否添加column，以便于后续的合并，该方法最后将一组的所有交易日数据合并到一个csv文件里，用组别命名。  
 
-`all_to_one(nameList)`方法将`deal_csv(folderName,label=0)`生成的所有csv文件合并到一个csv文件里，命名为`total_temp.csv`，以便后续处理。  
-
-`chenge_columns_order(columns_list)`方法更改混乱的columns的顺序，将columns的顺序定义为传入的`columns_list`的顺序。生成一个新的csv文件`total_temp_nc.csv`  
-
-`sort_df()`方法将`total_temp_nc.csv`按照客户昵称和排名的顺序进行排序，得到新的csv文件`total_temp_new.csv`。  
-
-`get_id()`方法根据用户昵称为用户添加ID。得到新的文件`total_temp_new_id.csv`。  
+`all_to_one(nameList)`方法将`deal_csv(folderName,label=0)`生成的所有csv文件合并到一个csv文件里，命名为`total_temp.csv`，以便后续处理。期间按照客户昵称和排名的顺序进行排序，并根据用户昵称为用户添加ID，得到新的文件`total_data.csv`。  

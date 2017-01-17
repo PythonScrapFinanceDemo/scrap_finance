@@ -8,10 +8,7 @@ def get_date(filename):
     date = filename.split('-')
     return date[1]+'-'+date[2]+'-'+date[3]
 
-def all_to_one(nameList):
-    '''
-    所有csv文件合并到一个csv文件里，命名为`total_temp.csv`，以便后续处理。
-    '''
+def all_to_one(nameList,columns_list):
     for df_i in range(len(nameList)):
         df_name = nameList[df_i]+'.csv'
         temp_df = pd.read_csv(df_name, low_memory=False)
@@ -19,7 +16,18 @@ def all_to_one(nameList):
             total_df = temp_df
         else:
             total_df = total_df.append(temp_df,ignore_index=True)
-    total_df.to_csv('total_temp.csv')
+    temp_df = total_df
+    temp_df = temp_df[columns_list]
+    temp_df = temp_df.sort_values(['客户昵称','排名'], ascending=[True,True])
+    names = make_unique(temp_df['客户昵称'].tolist())
+    temp_df['ID'] = Series('-',index=temp_df.index)
+    order = 0
+    for i in range(len(names) - 1):
+        print(i)
+        nums  = len(temp_df[temp_df['客户昵称']==names[i]])
+        temp_df['ID'].loc[order:order+nums] = i
+        order = order + nums
+    temp_df.to_csv('total_temp_new_id.csv')
     return total_df
 
 def deal_csv(folderName,label=0):
@@ -63,60 +71,19 @@ def deal_csv(folderName,label=0):
         print(file_i)
     filetowrite.close()
 
-def chenge_columns_order(columns_list):
-    '''
-    更改混乱的columns的顺序，将columns的顺序定义为传入的`columns_list`的顺序。生成一个新的csv文件`total_temp_nc.csv`
-    '''
-    temp_df = pd.read_csv('total_temp.csv', low_memory=False)
-    temp_df = temp_df[columns_list]
-    temp_df.to_csv('total_temp_nc.csv')
-
-def sort_df():
-    '''
-    按照客户昵称和排名的顺序进行排序，得到新的csv文件`total_temp_new.csv`。
-    '''
-    temp_df = pd.read_csv('total_temp_nc.csv', low_memory=False)
-    temp_df = temp_df.sort_values(['客户昵称','排名'], ascending=[True,True])
-    temp_df.to_csv('total_temp_new.csv')
-
-
-def make_unique(original_list):
-    unique_list = []
-    [unique_list.append(obj) for obj in original_list if obj not in unique_list]
-    return unique_list
-
-def get_id():
-    '''
-    根据用户昵称为用户添加ID。得到新的文件`total_temp_new_id.csv`。 
-    '''
-    temp_df = pd.read_csv('total_temp_new.csv', low_memory=False)
-    names = make_unique(temp_df['客户昵称'].tolist())
-    temp_df['ID'] = Series('-',index=temp_df.index)
-    order = 0
-    for i in range(len(names)):
-        print(i)
-        nums  = len(temp_df[temp_df['客户昵称']==names[i]])
-        temp_df['ID'].loc[order:order+nums] = i
-        order = order + nums
-    temp_df.to_csv('total_temp_new_id.csv')
 
 if __name__ == '__main__':
-    deal_csv('JiJinZu')
-    deal_csv('ChengXuHuaZu')
-    deal_csv('QingLiangZu')
-    deal_csv('ZhongLiangZu')
-    deal_csv('GuiJinShu',1)
-    deal_csv('NongChanPin',1)
-    deal_csv('NengYuanHuaGong',1)
-    deal_csv('YouSeJinShu',1)
-    deal_csv('JinRongQiHou',1)
-    deal_csv('JingLiRun',1)
-    all_to_one(['JiJinZu','ChengXuHuaZu','QingLiangZu','ZhongLiangZu','GuiJinShu','NongChanPin','NengYuanHuaGong','YouSeJinShu','JinRongQiHou','JingLiRun'])
+    deal_csv('基金组')
+    deal_csv('程序化组')
+    deal_csv('轻量组')
+    deal_csv('重量组')
+    deal_csv('贵金属',1)
+    deal_csv('农产品',1)
+    deal_csv('能源化工',1)
+    deal_csv('有色金属',1)
+    deal_csv('金融期货',1)
+    deal_csv('净利润',1)
 
     columns_list = ['客户昵称','组别','排行榜','时间','排名','当日权益','风险度(%)','净利润','净利润得分','回撤率(%)','回撤率得分','日净值','累计净值',
                     '净值得分','综合得分','参考收益率(%)','指定交易商','操作指导','账户评估']
-
-    chenge_columns_order(columns_list)
-
-    sort_df()
-    get_id()
+    all_to_one(['基金组','程序化组','轻量组','重量组','贵金属','农产品','能源化工','有色金属','金融期货','净利润'],columns_list)
