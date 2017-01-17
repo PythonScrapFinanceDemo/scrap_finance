@@ -6,9 +6,6 @@ from datetime import date, timedelta as td
 def get_date_list(begin_date,end_date):
     '''
     输入日期格式为列表'year-month-day'
-    该方法仅适用于该爬虫，如果改变日期会出现重大bug
-    起始日期必须是月首日或月末日
-    说实话这个方法写的非常之烂，原因是我很懒，以后闲的蛋疼的话我再修改
     '''
     begin_date = begin_date.split('-')
     end_date = end_date.split('-')

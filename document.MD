@@ -93,6 +93,7 @@ def select_data(user_information,driver):
 ```
 `scrap.py`存储了我们在主函数里调用的所有和模拟点击，抓取信息有关的函数。
 我们分析其中主要的几个起到关键作用的函数：  
+
 `select_data(user_information,driver)`：  
 该函数用来抓取当前`driver`对应的页面的数据。`user_information`是一个list，用于存储抓取的信息。  
 先使用bs库的BeautifulSoup方法获取当前页面的html代码，然后开始存储：  
@@ -101,6 +102,7 @@ def select_data(user_information,driver):
 当没有异常抛出时，进入`else`作用域：  
 循环操作这个`user_information_obj`：新建一个临时的空list:`temp`，每一行对应的数据，都分别存储在这一行对应的`tr`标签的`td`子标签中，我们就再对每一个`td`子标签进行循环操作，提取其中对应的字符串信息：`temp_data = td_i.get_text().split()`,然后把他们都添加到`temp`中，最后再将这个临时list添加到`user_information`中，在下一次对`tr`的循环置空`temp`。  
 完成两层循环后，返回`user_information`。  
+
 `get_page_now(driver)`方法用于获取当前页对应的页码，该方法主要是方便其他方法调用。  
 ```
 def get_page_now(driver):  #获取当前所在页数，并返回
@@ -113,4 +115,53 @@ def get_page_now(driver):  #获取当前所在页数，并返回
         return page_now
 ```
 观察网页的html代码，页码可以在`select`块中观察到，`select`对应的`id`为`AspNetPager1_input`。`select`块中有`option`标签，当`option`的`selected="true"`时，其对应的字符串就是当前页码。  
-`get_group_now(group_name,driver):`方法用于获取当前组对应的ID，原理与`get_page_now`类似。  
+
+`get_group_now(group_name,driver):`方法用于获取当前组对应的ID，原理与`get_page_now`类似。不再赘述。  
+
+`get_next_page_button(driver)`方法用于找到下一页的链接，并模拟点击，进入下一页，以便继续抓取数据。  
+```
+def get_next_page_button(driver):  #找到下一页的按钮并返回按钮
+    page_now = get_page_now(driver)
+    page_next = str(page_now + 1)
+    try:
+        if page_now%10 != 0:
+            #next_page_button = driver.find_element_by_xpath("//a[@title='转到第'+page_next+'页']")
+            next_page_button = driver.find_element_by_link_text('['+page_next+']')
+        else:
+            next_page_button = driver.find_elements_by_link_text('...')[-1]
+        #next_page_button = driver.find_element_by_link_text('&gt;')
+    except Exception as e:
+        print("We at page: "+str(page_now))
+        print("We can't get the next page button!")
+        raise e
+    else:
+        return next_page_button
+```
+先用get_page_now获取当前页数，加1就是下一页，之后分析HTML代码，获得下一页链接，返回driver对应的element.  
+
+`get_next_group_button(group_name,driver)`获得下一组的链接并模拟点击，原理类似，不再赘述。  
+
+`next_page(page,driver)`方法通过`get_next_page_button(`返回的元素，模拟点击翻页操作的行为。进行翻页。  
+
+`next_group(group_name,driver)`方法通过`get_next_group_button`返回的元素，模拟点击下一参赛组的行为。进入下一参赛组。  
+
+`click_first_page(driver)`因为在每次翻页或切换组时有可能第一次看到的页码不是第一页，所以模拟点击第一页的链接。  
+
+`go_to_day(day,driver)`该方法指定切换到传入的参数day对应的日期，模拟填表，然后发送请求。是日期切换到指定日期。  
+
+3. `date.py` 部分  
+该部分主要使用`datetime`和`calendar`两个类库，来获取所有从4.1到9.30之间的所有交易日列表。  
+`get_date_list(begin_date,end_date)`方法接收起止日期的字符串，剔除掉所有法定节假日。返回交易日列表。  
+
+`tick_weekend(date_list)`方法用于辅助`get_date_list`剔除掉所有的周末。  
+
+4. `deal_csv.py` 部分  
+`deal_csv(folderName,label=0)`方法用于处理抓取的数据，使用os模块获取所有已爬取的csv文件，一次运行针对一个特定组别，因为前四个参赛组和后六个参赛组columns信息数不同，所以通过传入的label来判断是否添加column，以便于后续的合并，该方法最后将一组的所有交易日数据合并到一个csv文件里，用组别命名。  
+
+`all_to_one(nameList)`方法将`deal_csv(folderName,label=0)`生成的所有csv文件合并到一个csv文件里，命名为`total_temp.csv`，以便后续处理。  
+
+`chenge_columns_order(columns_list)`方法更改混乱的columns的顺序，将columns的顺序定义为传入的`columns_list`的顺序。生成一个新的csv文件`total_temp_nc.csv`  
+
+`sort_df()`方法将`total_temp_nc.csv`按照客户昵称和排名的顺序进行排序，得到新的csv文件`total_temp_new.csv`。  
+
+`get_id()`方法根据用户昵称为用户添加ID。得到新的文件`total_temp_new_id.csv`。  

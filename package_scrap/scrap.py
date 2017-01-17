@@ -4,11 +4,7 @@ from selenium import webdriver
 import time
 import logging
 import pandas as pd
-import numpy as np
 
-'''
-这个垃圾网站每次翻到下一组的时候页码居然默认在最后，WTF？
-'''
 
 #清洗掉数据中的垃圾，该函数只针对columns_text，看起来是个失败
 def get_plain_text(ResultSet):

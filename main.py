@@ -4,7 +4,6 @@ from selenium import webdriver
 import time
 import logging
 import pandas as pd
-import numpy as np
 
 import package_scrap.scrap as scrap
 import package_scrap.date as dt
