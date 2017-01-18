@@ -26,8 +26,7 @@ for i in group_option:
 group_name.remove(group_name[-1])  #删除期权，比赛未做要求
 
 date_list = []
-#date_list = dt.get_date_list('2016-04-01','2016-09-30')  #获得所有日期
-date_list = dt.get_date_list('2016-04-18','2016-09-30')  #获得所有日期
+date_list = dt.get_date_list('2016-04-01','2016-09-30')  #获得所有日期
 
 def main():
     '''

@@ -27,7 +27,7 @@ def all_to_one(nameList,columns_list):
         nums  = len(temp_df[temp_df['客户昵称']==names[i]])
         temp_df['ID'].loc[order:order+nums] = i
         order = order + nums
-    temp_df.to_csv('total_temp_new_id.csv')
+    temp_df.to_csv('total_data.csv')
     return total_df
 
 def deal_csv(folderName,label=0):
